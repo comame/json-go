@@ -8,20 +8,20 @@ import (
 
 func Example() {
 	obj := builder.Object(
-		builder.KV("string", builder.String("hoge")),
-		builder.KV("int", builder.Int64(12)),
-		builder.KV("float", builder.Float64(1.0)),
-		builder.KV("bool", builder.Bool(true)),
-		builder.KV("null", builder.Null()),
-		builder.KV("nested", builder.Object(
-			builder.KV("foo", builder.String("bar")),
+		builder.Entry("string", builder.String("hoge")),
+		builder.Entry("int", builder.Int64(12)),
+		builder.Entry("float", builder.Float64(1.0)),
+		builder.Entry("bool", builder.Bool(true)),
+		builder.Entry("null", builder.Null()),
+		builder.Entry("nested", builder.Object(
+			builder.Entry("foo", builder.String("bar")),
 		)),
-		builder.KV("array", builder.Array(
+		builder.Entry("array", builder.Array(
 			builder.String("foo"),
 			builder.String("bar"),
 			builder.Null(),
 		)),
-		builder.KV("raw", builder.Raw([]byte(`{"raw":0}`))),
+		builder.Entry("raw", builder.Raw([]byte(`{"raw":0}`))),
 	)
 
 	arr := builder.Array(builder.String("hi"))

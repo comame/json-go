@@ -11,7 +11,7 @@ var (
 	ErrInvalidReceiverType = errors.New("invalid receiver type")
 )
 
-type tjson struct {
+type Json struct {
 	t   jsonType
 	v   interface{}
 	err error
@@ -30,20 +30,20 @@ const (
 	traw
 )
 
-type kv struct {
+type KV struct {
 	key   string
-	value tjson
+	value Json
 }
 
-func Object(values ...kv) tjson {
-	var j tjson
+func Object(values ...KV) Json {
+	var j Json
 	j.t = tobject
 	m := make(map[string]json.RawMessage)
 
 	for _, kv := range values {
 		v, err := kv.value.toRaw()
 		if err != nil {
-			return tjson{
+			return Json{
 				err: err,
 			}
 		}
@@ -55,22 +55,22 @@ func Object(values ...kv) tjson {
 	return j
 }
 
-func KV(key string, value tjson) kv {
-	return kv{
+func Entry(key string, value Json) KV {
+	return KV{
 		key:   key,
 		value: value,
 	}
 }
 
-func Array(values ...tjson) tjson {
-	var j tjson
+func Array(values ...Json) Json {
+	var j Json
 	j.t = tarray
 	var arr []interface{}
 
 	for _, value := range values {
 		v, err := value.toRaw()
 		if err != nil {
-			return tjson{
+			return Json{
 				err: err,
 			}
 		}
@@ -82,49 +82,49 @@ func Array(values ...tjson) tjson {
 	return j
 }
 
-func String(v string) tjson {
-	return tjson{
+func String(v string) Json {
+	return Json{
 		t: tstring,
 		v: v,
 	}
 }
 
-func Int64(v int64) tjson {
-	return tjson{
+func Int64(v int64) Json {
+	return Json{
 		t: tint,
 		v: v,
 	}
 }
 
-func Float64(v float64) tjson {
-	return tjson{
+func Float64(v float64) Json {
+	return Json{
 		t: tfloat,
 		v: v,
 	}
 }
 
-func Bool(v bool) tjson {
-	return tjson{
+func Bool(v bool) Json {
+	return Json{
 		t: tbool,
 		v: v,
 	}
 }
 
-func Null() tjson {
-	return tjson{
+func Null() Json {
+	return Json{
 		t: tnull,
 		v: nil,
 	}
 }
 
-func Raw(v []byte) tjson {
-	return tjson{
+func Raw(v []byte) Json {
+	return Json{
 		t: traw,
 		v: v,
 	}
 }
 
-func (j *tjson) Set(key string, value tjson) error {
+func (j *Json) Set(key string, value Json) error {
 	if j.t != tobject {
 		return ErrInvalidReceiverType
 	}
@@ -143,7 +143,7 @@ func (j *tjson) Set(key string, value tjson) error {
 	return nil
 }
 
-func (j *tjson) Push(value tjson) error {
+func (j *Json) Push(value Json) error {
 	if j.t != tarray {
 		return ErrInvalidReceiverType
 	}
@@ -163,7 +163,7 @@ func (j *tjson) Push(value tjson) error {
 	return nil
 }
 
-func (j *tjson) Build() ([]byte, error) {
+func (j *Json) Build() ([]byte, error) {
 	if j.err != nil {
 		return nil, j.err
 	}
@@ -176,19 +176,19 @@ func (j *tjson) Build() ([]byte, error) {
 	return b, nil
 }
 
-func (j *tjson) MustSet(key string, value tjson) {
+func (j *Json) MustSet(key string, value Json) {
 	if err := j.Set(key, value); err != nil {
 		panic(err)
 	}
 }
 
-func (j *tjson) MustPush(value tjson) {
+func (j *Json) MustPush(value Json) {
 	if err := j.Push(value); err != nil {
 		panic(err)
 	}
 }
 
-func (j *tjson) MustBuild() []byte {
+func (j *Json) MustBuild() []byte {
 	s, err := j.Build()
 	if err != nil {
 		panic(err)
@@ -196,7 +196,7 @@ func (j *tjson) MustBuild() []byte {
 	return s
 }
 
-func (j *tjson) toRaw() (json.RawMessage, error) {
+func (j *Json) toRaw() (json.RawMessage, error) {
 	if j.err != nil {
 		return nil, j.err
 	}
