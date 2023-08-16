@@ -21,6 +21,7 @@ func Example() {
 			builder.String("bar"),
 			builder.Null(),
 		)),
+		builder.KV("raw", builder.Raw([]byte(`{"raw":0}`))),
 	)
 
 	arr := builder.Array(builder.String("hi"))
@@ -31,5 +32,5 @@ func Example() {
 	str := obj.MustBuild()
 
 	fmt.Println(string(str))
-	// Output: {"array":["foo","bar",null],"bool":true,"float":1,"greetings":["hi","hello"],"int":12,"nested":{"foo":"bar"},"null":null,"string":"hoge"}
+	// Output: {"array":["foo","bar",null],"bool":true,"float":1,"greetings":["hi","hello"],"int":12,"nested":{"foo":"bar"},"null":null,"raw":{"raw":0},"string":"hoge"}
 }

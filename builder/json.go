@@ -27,6 +27,7 @@ const (
 	tstring
 	tbool
 	tnull
+	traw
 )
 
 type kv struct {
@@ -116,6 +117,13 @@ func Null() tjson {
 	}
 }
 
+func Raw(v []byte) tjson {
+	return tjson{
+		t: traw,
+		v: v,
+	}
+}
+
 func (j *tjson) Set(key string, value tjson) error {
 	if j.t != tobject {
 		return ErrInvalidReceiverType
@@ -191,6 +199,11 @@ func (j *tjson) MustBuild() []byte {
 func (j *tjson) toRaw() (json.RawMessage, error) {
 	if j.err != nil {
 		return nil, j.err
+	}
+
+	if j.t == traw {
+		bytes := j.v.([]byte)
+		return bytes, nil
 	}
 
 	v, err := json.Marshal(j.v)
